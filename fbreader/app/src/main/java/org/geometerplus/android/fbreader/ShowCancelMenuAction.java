@@ -26,11 +26,10 @@ import android.content.Intent;
 import org.geometerplus.fbreader.fbreader.FBReaderApp;
 import org.geometerplus.fbreader.fbreader.options.CancelMenuHelper;
 
-import org.geometerplus.android.fbreader.api.FBReaderIntents;
 import org.geometerplus.android.fbreader.libraryService.BookCollectionShadow;
 
 class ShowCancelMenuAction extends FBAndroidAction {
-	ShowCancelMenuAction(FBReader baseActivity, FBReaderApp fbreader) {
+	ShowCancelMenuAction(FBReaderMolitfelnic baseActivity, FBReaderApp fbreader) {
 		super(baseActivity, fbreader);
 	}
 
@@ -50,7 +49,7 @@ class ShowCancelMenuAction extends FBAndroidAction {
 							new CancelMenuHelper().getActionsList(collection)
 						);
 					intent.putExtra(CancelActivity.ACTIONS_KEY, actions);
-					BaseActivity.startActivityForResult(intent, FBReader.REQUEST_CANCEL_MENU);
+					BaseActivity.startActivityForResult(intent, FBReaderMolitfelnic.REQUEST_CANCEL_MENU);
 				}
 			});
 		} else {

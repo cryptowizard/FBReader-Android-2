@@ -67,7 +67,7 @@ android {
 
         buildConfigField "String", "FBNETWORK_KEY", "${FBREADER_ORG_FBNETWORK_KEY}"
         buildConfigField "String", "FBNETWORK_SECRET", "${FBREADER_ORG_FBNETWORK_SECRET}"
-        applicationId 'org.geometerplus.zlibrary.ui.android.aplicatii.romanesti'
+        applicationId 'org.geometerplus.zlibrary.ui.android.aplicatii.romanesti_molitfelnic'
         signingConfig signingConfigs.release
 
 		externalNativeBuild { //parallel ndk builds; decrease the value or remove if dependency errors
@@ -112,7 +112,7 @@ android {
                 // , 'armeabi', 'mips'
                 versionCode 1
             }
-            applicationId 'org.geometerplus.zlibrary.ui.android.aplicatii.romanesti'
+            applicationId 'org.geometerplus.zlibrary.ui.android.aplicatii.romanesti_molitfelnic'
             signingConfig signingConfigs.release
         }
         // // arm { //obsolete

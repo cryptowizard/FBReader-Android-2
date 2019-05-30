@@ -19,8 +19,6 @@
 
 package org.geometerplus.android.fbreader;
 
-import java.util.Map;
-
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -35,7 +33,7 @@ import org.geometerplus.android.fbreader.httpd.DataUtil;
 import org.geometerplus.android.util.UIMessageUtil;
 
 class OpenVideoAction extends FBAndroidAction {
-	OpenVideoAction(FBReader baseActivity, FBReaderApp fbreader) {
+	OpenVideoAction(FBReaderMolitfelnic baseActivity, FBReaderApp fbreader) {
 		super(baseActivity, fbreader);
 	}
 

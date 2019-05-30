@@ -56,7 +56,7 @@ import org.geometerplus.fbreader.util.*;
 //aplicatii.romanesti: again for SDCardCopy:
 import org.geometerplus.fbreader.Paths;
 import org.geometerplus.zlibrary.text.view.ZLTextWordCursor;
-import org.nicolae.test.BookSearchHintProvider;
+import org.nicolae.search_molitfelnic.BookSearchHintProvider;
 
 // Dar astea, oare tot de la aplicatii.romanesti??? -> DA, confirmat.
 import android.app.ProgressDialog;
@@ -418,7 +418,7 @@ public final class FBReaderApp extends ZLApplication implements IBookCollection.
 					Paths.BookCollectionVersionOption().setValue(verFromAPK);
 					// tell the content provider to reset (and reload the books DB)
 					ContentResolver resolver = ctx.getContentResolver();
-					ContentProviderClient client = resolver.acquireContentProviderClient("org.nicolae.test.BookSearchHintProvider");
+					ContentProviderClient client = resolver.acquireContentProviderClient("org.nicolae.search_molitfelnic.BookSearchHintProvider");
 					BookSearchHintProvider provider = (BookSearchHintProvider) client.getLocalContentProvider();
 					provider.resetDbConnection();
 					client.release();
