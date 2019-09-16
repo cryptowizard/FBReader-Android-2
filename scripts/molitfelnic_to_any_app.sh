@@ -4,6 +4,9 @@ set -vx
 #git clone -b bibliotecaortodoxa --single-branch https://github.com/aplicatii-romanesti/FBReader-Android-2.git
 #git checkout -b molitfelnic bibliotecaortodoxa
 
+# BASE SETUP:
+RESOURCES_DIR="./molitfelnic_to_any_app_res"
+
 # SETUP:
 NEWAPP_CAMEL=${1:-BibliotecaOrtodoxa}   #Molitfelnic #${NEWAPP_CAMEL} # NO SPACES !!!
 NEWAPP_SMALL=$(echo $NEWAPP_CAMEL | tr '[:upper:]' '[:lower:]' )   #molitfelnic #${NEWAPP_SMALL}
@@ -23,15 +26,18 @@ fi
 
 # STEP 0: Make sure we have the png icons avaialble
 echo " STEP 0: Make sure we have the png icons avaialble"
-if [[ ! -r ${ICONS_BASE_DIR}/${NEWAPP_CAMEL}/drawable-hdpi/fbreader.png ]]; then
-	echo "Could not find the icons in: ${ICONS_BASE_DIR}/${NEWAPP_CAMEL}/drawable-hdpi/fbreader.png " && exit 1
+if [[ ! -r ${RESOURCES_DIR}/${NEWAPP_CAMEL}/drawable-hdpi/fbreader.png ]]; then
+	echo "Could not find the icons in: ${RESOURCES_DIR}/${NEWAPP_CAMEL}/drawable-hdpi/fbreader.png " && exit 1
 else
-	cp -rpf ${ICONS_BASE_DIR}/${NEWAPP_CAMEL}/drawable-*dpi ./fbreader/app/src/main/res/
+	cp -rpf ${RESOURCES_DIR}/${NEWAPP_CAMEL}/drawable-*dpi ./fbreader/app/src/main/res/
+	cp -rpf ${RESOURCES_DIR}/${NEWAPP_CAMEL}/drawable-*dpi ./fbreader/app/src/main/res/
 fi
 
 # STEP 1: Replace inside files:
 echo "STEP 1: Replace inside files:"
-ALL_FILES=$(find ./ -type f \( -iname \*.java -o -iname \*.xml -o -iname \*.gradle -o -iname \*.properties \) )
+#ALL_FILES=$(find ./ -type f \( -iname \*.java -o -iname \*.xml -o -iname \*.gradle -o -iname \*.properties \) )
+#ALL_FILES=$(find ./ -type f ! \( -path '*/.gradle/*' -o -path '*/generated/*' -o -path '/*intermediates/*' \)  \( -iname \*.java -o -iname \*.xml -o -iname \*.gradle -o -iname \*.properties \)  )
+ALL_FILES=$(find . \( -path "*/build" -o -path "./.gradle" -o -path "*/.git" \) -a -prune -o \( -type f \( -iname \*.java -o -iname \*.xml -o -iname \*.gradle -o -iname \*.properties \) -print \) )
 
 perl -p -i -e "s^molitfelnic^${NEWAPP_SMALL}^g" $ALL_FILES
 perl -p -i -e "s^Molitfelnic^${NEWAPP_CAMEL}^g" $ALL_FILES
@@ -64,6 +70,9 @@ grep Application fbreader/app/src/main/java/org/geometerplus/android/fbreader/FB
 
 echo "Sanity 2"
 grep Application fbreader/app/src/main/java/org/geometerplus/android/fbreader/FBReader${NEWAPP_CAMEL}.java
+
+echo "Sanity 3: expect to have changes in 186 files. Your git status | wc is:"
+git status | wc -l
 
 echo "${0} finished at `date`"
 echo "git branch $NEWAPP_SMALL"
