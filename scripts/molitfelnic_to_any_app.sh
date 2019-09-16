@@ -4,34 +4,50 @@ set -vx
 #git clone -b bibliotecaortodoxa --single-branch https://github.com/aplicatii-romanesti/FBReader-Android-2.git
 #git checkout -b molitfelnic bibliotecaortodoxa
 
-# BASE SETUP:
-RESOURCES_DIR="./molitfelnic_to_any_app_res"
+# INPUT
+TARGET_APP=${1:-BibliotecaOrtodoxa}
 
-# SETUP:
-NEWAPP_CAMEL=${1:-BibliotecaOrtodoxa}   #Molitfelnic #${NEWAPP_CAMEL} # NO SPACES !!!
-NEWAPP_SMALL=$(echo $NEWAPP_CAMEL | tr '[:upper:]' '[:lower:]' )   #molitfelnic #${NEWAPP_SMALL}
-NEWAPP_NAME=$NEWAPP_CAMEL
-NEWAPP_NAME="Biblioteca Ortodoxa"
-NEWAPP_SEARCH_HINT=$NEWAPP_CAMEL
-NEWAPP_SEARCH_HINT="Ioan Rusu"
-###
+# BASE SETUP:
+RESOURCES_DIR="./molitfelnic_to_any_app_res/${TARGET_APP}"
 
 # Make sure we are in the right directory:
+echo "Pre-Sanity: Make sure we are in the right directory:"
 cd ..
 pwd
 if [[ ! -r .gitignore ]]; then
-	echo "Not in the right directory... ; Call me from scripts directory of the molitfelnic branch "
-	exit
+        echo "Not in the right directory... ; Call me from scripts directory of the molitfelnic branch "
+        exit
 fi
 
-# STEP 0: Make sure we have the png icons avaialble
+# STEP 0: Make sure we have the png icons avaialble && get app names
 echo " STEP 0: Make sure we have the png icons avaialble"
-if [[ ! -r ${RESOURCES_DIR}/${NEWAPP_CAMEL}/drawable-hdpi/fbreader.png ]]; then
-	echo "Could not find the icons in: ${RESOURCES_DIR}/${NEWAPP_CAMEL}/drawable-hdpi/fbreader.png " && exit 1
+if [[ ! -r ${RESOURCES_DIR}/drawable-hdpi/fbreader.png ]]; then
+        echo "Could not find the icons in: ${RESOURCES_DIR}/drawable-hdpi/fbreader.png " && exit 1
 else
-	cp -rpf ${RESOURCES_DIR}/${NEWAPP_CAMEL}/drawable-*dpi ./fbreader/app/src/main/res/
-	cp -rpf ${RESOURCES_DIR}/${NEWAPP_CAMEL}/drawable-*dpi ./fbreader/app/src/main/res/
+        cp -rpf ${RESOURCES_DIR}/drawable-*dpi ./fbreader/app/src/main/res/
+        cp -rpf ${RESOURCES_DIR}/drawable-*dpi ./fbreader/app/src/main/res/
 fi
+
+# NEW_SETUP:
+NEWAPP_CAMEL=$(grep NEWAPP_CAMEL ${RESOURCES_DIR}/name.metadata | cut -d"=" -f2)
+NEWAPP_SMALL=$(echo $NEWAPP_CAMEL | tr '[:upper:]' '[:lower:]' )
+NEWAPP_NAME=$NEWAPP_CAMEL
+NEWAPP_NAME=$(grep NEWAPP_NAME ${RESOURCES_DIR}/name.metadata | cut -d"=" -f2)
+NEWAPP_SEARCH_HINT=$NEWAPP_CAMEL
+NEWAPP_SEARCH_HINT=$(grep NEWAPP_SEARCH_HINT ${RESOURCES_DIR}/name.metadata | cut -d"=" -f2)
+
+if [[ -z "$NEWAPP_CAMEL" || -z "$NEWAPP_NAME" || -z "${NEWAPP_SEARCH_HINT}" ]]; then
+	echo "Error: some params could not be found in ${RESOURCES_DIR}/name.metadata"
+	exit
+fi
+# OLD_SETUP:
+#NEWAPP_CAMEL=${1:-BibliotecaOrtodoxa}   #Molitfelnic #${NEWAPP_CAMEL} # NO SPACES !!!
+#NEWAPP_SMALL=$(echo $NEWAPP_CAMEL | tr '[:upper:]' '[:lower:]' )   #molitfelnic #${NEWAPP_SMALL}
+#NEWAPP_NAME=$NEWAPP_CAMEL
+#NEWAPP_NAME="Biblioteca Ortodoxa"
+#NEWAPP_SEARCH_HINT=$NEWAPP_CAMEL
+#NEWAPP_SEARCH_HINT="Ioan Rusu"
+###
 
 # STEP 1: Replace inside files:
 echo "STEP 1: Replace inside files:"
