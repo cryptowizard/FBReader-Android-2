@@ -37,7 +37,7 @@ docker run --name fb -ti -v `pwd`/FBReader-Android-2:/p mingc/android-build-box:
 
 ls -la ~/FBReader-Android-2/fbreader/app/build/outputs/apk/fat/release/app-fat-release.apk | tee -a $NAME.log
 cp -f ~/FBReader-Android-2/fbreader/app/build/outputs/apk/fat/release/app-fat-release.apk ~/${NAME}.apk
-echo "Ended at: `date` (was started at $START_DATE" | tee -a $NAME.log
+echo "Ended at: `date` (was started at $DATE_START" | tee -a $NAME.log
 
 
 

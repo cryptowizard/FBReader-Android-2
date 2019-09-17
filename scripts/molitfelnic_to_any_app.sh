@@ -12,7 +12,7 @@ RESOURCES_DIR="./molitfelnic_to_any_app_res/${TARGET_APP}"
 BOOKS_DIR=~/Books
 
 # Make sure we are in the right directory:
-echo "Pre-Sanity: Make sure we are in the right directory:"
+echo "STEP 0.2: Pre-Sanity: Make sure we are in the right directory:"
 cd ..
 pwd
 if [[ ! -r .gitignore ]]; then
@@ -20,7 +20,23 @@ if [[ ! -r .gitignore ]]; then
         exit
 fi
 
-# STEP 0: Make sure we have the png icons avaialble && get app names
+# STEP 0.3 Pre-Sanity: Make sure we are on molitfelnic branch!:
+export GIT_BRANCH=$(git branch | grep '*' | cut -d' ' -f2)
+if [[ ${GIT_BRANCH} != "molitfelnic" ]]; then
+	echo "we are not on molitfelnic branch... we are on: ${GIT_BRANCH} ..."
+	echo "you may want to do: git checkout molitfelnic"
+	exit
+fi
+
+# STEP 0.4 Pre-Sanity: Make sure there was a git reset HEAD: 
+echo "STEP 00 Pre-Sanity: Make sure there was a git reset --hard HEAD (or similar):"
+if [[ 0 -eq $(grep -c molitfelnic fbreader/app/build.gradle || true) ]]; then
+	echo "the grep applicationId fbreader/app/build.gradle does not find molitfelnic; you may want to do git reset --hard HEAD "
+	grep applicationId fbreader/app/build.gradle | head -1
+	exit
+fi
+
+# STEP 0.5: Make sure we have the png icons avaialble && get app names
 echo "STEP 0: Make sure we have the png icons avaialble"
 if [[ ! -r ${RESOURCES_DIR}/drawable-hdpi/fbreader.png ]]; then
         echo "Could not find the icons in: ${RESOURCES_DIR}/drawable-hdpi/fbreader.png " && exit 1
@@ -29,19 +45,19 @@ else
         cp -rpf ${RESOURCES_DIR}/drawable-*dpi ./fbreader/app/src/main/res/
 fi
 
-# STEP 0.1: Make sure we have the Books directory
+# STEP 0.6: Make sure we have the Books directory
 echo "STEP 0.1: Make sure we have the Books diretory"
 
 if [[ ! -d ${BOOKS_DIR}/ ]]; then
         echo "Could not find the Books in: ${BOOKS_DIR}/" && exit 1
 fi
 
-# STEP 0.2:  "Clean old books in the app (if any)"
+# STEP 0.7:  "Clean old books in the app (if any)"
 echo "Clean old books in the app (if any)"
 mkdir -p ./fbreader/app/src/main/assets/data/SDCard/Books/
 rm -rf ./fbreader/app/src/main/assets/data/SDCard/Books/*
 
-# STEP 0.3: determine&copy required Books"
+# STEP 0.8: determine&copy required Books"
 echo "STEP 0.3: determine&copy required Books:"
 while IFS= read B ; do
 	echo B=$B
@@ -50,7 +66,7 @@ while IFS= read B ; do
 	ls -la ./fbreader/app/src/main/assets/data/SDCard/Books/
 done < ${RESOURCES_DIR}/epubs.list
 
-# STEP 0.4: determine name of the new app and other metadata details
+# STEP 0.9: determine name of the new app and other metadata details
 echo "STEP 0.4: determine name of the new app and other metadata details:"
 NEWAPP_CAMEL=$(grep NEWAPP_CAMEL ${RESOURCES_DIR}/name.metadata | cut -d"=" -f2)
 NEWAPP_SMALL=$(echo $NEWAPP_CAMEL | tr '[:upper:]' '[:lower:]' )
