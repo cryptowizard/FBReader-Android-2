@@ -1,5 +1,5 @@
 #!/bin/bash
-set -vx
+set -vxeu
 #find ./ -type f "*.java" -exec perl -p -i -e 's!FBReaderMolitfelnic.ORG!FBReader.ORG!g' {} +
 #git clone -b bibliotecaortodoxa --single-branch https://github.com/aplicatii-romanesti/FBReader-Android-2.git
 #git checkout -b molitfelnic bibliotecaortodoxa
@@ -9,6 +9,7 @@ TARGET_APP=${1:-BibliotecaOrtodoxa}
 
 # BASE SETUP:
 RESOURCES_DIR="./molitfelnic_to_any_app_res/${TARGET_APP}"
+BOOKS_DIR=~/Books
 
 # Make sure we are in the right directory:
 echo "Pre-Sanity: Make sure we are in the right directory:"
@@ -20,7 +21,7 @@ if [[ ! -r .gitignore ]]; then
 fi
 
 # STEP 0: Make sure we have the png icons avaialble && get app names
-echo " STEP 0: Make sure we have the png icons avaialble"
+echo "STEP 0: Make sure we have the png icons avaialble"
 if [[ ! -r ${RESOURCES_DIR}/drawable-hdpi/fbreader.png ]]; then
         echo "Could not find the icons in: ${RESOURCES_DIR}/drawable-hdpi/fbreader.png " && exit 1
 else
@@ -28,7 +29,28 @@ else
         cp -rpf ${RESOURCES_DIR}/drawable-*dpi ./fbreader/app/src/main/res/
 fi
 
-# NEW_SETUP:
+# STEP 0.1: Make sure we have the Books directory
+echo "STEP 0.1: Make sure we have the Books diretory"
+
+if [[ ! -d ${BOOKS_DIR}/ ]]; then
+        echo "Could not find the Books in: ${BOOKS_DIR}/" && exit 1
+fi
+
+# STEP 0.2:  "Clean old books in the app (if any)"
+echo "Clean old books in the app (if any)"
+rm -rf ./fbreader/app/src/main/assets/data/SDCard/Books/*
+
+# STEP 0.3: determine&copy required Books"
+echo "STEP 0.3: determine&copy required Books:"
+while IFS= read B ; do
+	echo B=$B
+	ls -la "${BOOKS_DIR}/${B}"
+	cp -rfp "${BOOKS_DIR}/${B}" ./fbreader/app/src/main/assets/data/SDCard/Books/
+	ls -la ./fbreader/app/src/main/assets/data/SDCard/Books/
+done < ${RESOURCES_DIR}/epubs.list
+
+# STEP 0.4: determine name of the new app and other metadata details
+echo "STEP 0.4: determine name of the new app and other metadata details:"
 NEWAPP_CAMEL=$(grep NEWAPP_CAMEL ${RESOURCES_DIR}/name.metadata | cut -d"=" -f2)
 NEWAPP_SMALL=$(echo $NEWAPP_CAMEL | tr '[:upper:]' '[:lower:]' )
 NEWAPP_NAME=$NEWAPP_CAMEL
@@ -40,14 +62,6 @@ if [[ -z "$NEWAPP_CAMEL" || -z "$NEWAPP_NAME" || -z "${NEWAPP_SEARCH_HINT}" ]]; 
 	echo "Error: some params could not be found in ${RESOURCES_DIR}/name.metadata"
 	exit
 fi
-# OLD_SETUP:
-#NEWAPP_CAMEL=${1:-BibliotecaOrtodoxa}   #Molitfelnic #${NEWAPP_CAMEL} # NO SPACES !!!
-#NEWAPP_SMALL=$(echo $NEWAPP_CAMEL | tr '[:upper:]' '[:lower:]' )   #molitfelnic #${NEWAPP_SMALL}
-#NEWAPP_NAME=$NEWAPP_CAMEL
-#NEWAPP_NAME="Biblioteca Ortodoxa"
-#NEWAPP_SEARCH_HINT=$NEWAPP_CAMEL
-#NEWAPP_SEARCH_HINT="Ioan Rusu"
-###
 
 # STEP 1: Replace inside files:
 echo "STEP 1: Replace inside files:"
