@@ -38,6 +38,7 @@ fi
 
 # STEP 0.2:  "Clean old books in the app (if any)"
 echo "Clean old books in the app (if any)"
+mkdir -p ./fbreader/app/src/main/assets/data/SDCard/Books/
 rm -rf ./fbreader/app/src/main/assets/data/SDCard/Books/*
 
 # STEP 0.3: determine&copy required Books"

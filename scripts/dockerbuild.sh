@@ -1,0 +1,44 @@
+#!/bin/bash
+set -Eeuxo pipefail
+DATE_START=`date +'%Y%m%d_%H%M%S'`
+
+echo "Name of the app being build provided as input is: $1"
+APP=$1
+
+cd ~/
+if [[ ! -d FBReader-Android-2 ]]; then
+  git clone -b ${1:-molitfelnic} --single-branch git@github.com:aplicatii-romanesti/FBReader-Android-2.git
+fi
+
+cd ~/FBReader-Android-2/
+export GIT_BRANCH=$(git branch | grep '*' | cut -d' ' -f2)
+cd -
+
+NAME="${APP}_${GIT_BRANCH}_${DATE_START}"
+echo "FYI, GIT_BRANCH=$GIT_BRANCH at date: $DATE_START (approx: `date`)" | tee ${NAME}.log
+
+cp ~/777/aplicatii.romanesti-release-key.keystore ~/FBReader-Android-2/
+
+#mkdir -p ~/FBReader-Android-2/fbreader/app/src/main/assets/data/SDCard/Books/
+#rm -rf ~/FBReader-Android-2/fbreader/app/src/main/assets/data/SDCard/Books/*
+#cd ~/FBReader-Android-2/fbreader/app/src/main/assets/data/SDCard
+#rm -rf Books
+#unzip '/home/aplicatii-romanesti/ToateCartile_EPUB_latest.zip'
+#cd -
+
+cd ~/
+docker rm -f fb || true
+#docker run --name fb -ti -v `pwd`/FBReader-Android-2:/p mingc/android-build-box:1.11.1 bash -c 'cd /p/ && ./gradlew  --gradle-user-home=/p/.gradle/ clean assembleRelease' | tee -a $GIT_BRANCH.log
+docker run --name fb -ti -v `pwd`/FBReader-Android-2:/p mingc/android-build-box:1.11.1 bash -c 'cd /p/ && ./gradlew  --gradle-user-home=/p/.gradle/ assembleRelease' | tee -a $NAME.log
+# --rm
+
+#or only pack:
+#docker run --rm --name fb -ti -v `pwd`/FBReader-Android-2:/p mingc/android-build-box:1.11.0 bash -c 'cd /p/ && ./gradlew  --gradle-user-home=/p/.gradle/ assembleRelease'
+
+ls -la ~/FBReader-Android-2/fbreader/app/build/outputs/apk/fat/release/app-fat-release.apk | tee -a $NAME.log
+cp -f ~/FBReader-Android-2/fbreader/app/build/outputs/apk/fat/release/app-fat-release.apk ~/${NAME}.apk
+echo "Ended at: `date` (was started at $START_DATE" | tee -a $NAME.log
+
+
+
+
