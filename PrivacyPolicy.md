@@ -1,6 +1,6 @@
 This application:
-- does not use google analytics
-- does not use google ads
+- does not use analytics (neither google nor other)
+- does not use ads (neither google nor other)
 - does not use any cookies
 and does not collect any data.
 
