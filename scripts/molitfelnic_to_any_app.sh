@@ -1,11 +1,24 @@
 #!/bin/bash
-set -vxeu
+set -vxeu -o pipefail
 #find ./ -type f "*.java" -exec perl -p -i -e 's!FBReaderMolitfelnic.ORG!FBReader.ORG!g' {} +
 #git clone -b bibliotecaortodoxa --single-branch https://github.com/aplicatii-romanesti/FBReader-Android-2.git
 #git checkout -b molitfelnic bibliotecaortodoxa
 
 # INPUT
-TARGET_APP=${1:-BibliotecaOrtodoxa}
+
+
+if [[ -n $1 ]]; then
+  echo "Name of the app being build provided as input is: $1"
+  TARGET_APP=$1
+  echo $TARGET_APP >../current_app.txt~
+elif [[ -r ../current_app.txt~ ]]; then
+  TARGET_APP=$(cat ../current_app.txt~)
+else
+  echo "Please provide input, e.g. BibliotecaOrtodoxa sau Pidalion sau VietileSfintilor sau BibliaOrtodoxa"
+  #TARGET_APP=${1:-BibliotecaOrtodoxa}
+  exit 1
+fi
+
 
 # BASE SETUP:
 RESOURCES_DIR="./molitfelnic_to_any_app_res/${TARGET_APP}"
@@ -21,6 +34,7 @@ if [[ ! -r .gitignore ]]; then
 fi
 
 # STEP 0.3 Pre-Sanity: Make sure we are on molitfelnic branch!:
+echo "STEP 0.3 Pre-Sanity: Make sure we are on molitfelnic branch!:"
 export GIT_BRANCH=$(git branch | grep '*' | cut -d' ' -f2)
 if [[ ${GIT_BRANCH} != "molitfelnic" ]]; then
 	echo "we are not on molitfelnic branch... we are on: ${GIT_BRANCH} ..."
@@ -29,7 +43,7 @@ if [[ ${GIT_BRANCH} != "molitfelnic" ]]; then
 fi
 
 # STEP 0.4 Pre-Sanity: Make sure there was a git reset HEAD: 
-echo "STEP 00 Pre-Sanity: Make sure there was a git reset --hard HEAD (or similar):"
+echo "STEP 0.4 Pre-Sanity: Make sure there was a git reset --hard HEAD (or similar):"
 if [[ 0 -eq $(grep -c molitfelnic fbreader/app/build.gradle || true) ]]; then
 	echo "the grep applicationId fbreader/app/build.gradle does not find molitfelnic; you may want to do git reset --hard HEAD "
 	grep applicationId fbreader/app/build.gradle | head -1
@@ -37,7 +51,7 @@ if [[ 0 -eq $(grep -c molitfelnic fbreader/app/build.gradle || true) ]]; then
 fi
 
 # STEP 0.5: Make sure we have the png icons avaialble && get app names
-echo "STEP 0: Make sure we have the png icons avaialble"
+echo "STEP 0.5: Make sure we have the png icons avaialble"
 if [[ ! -r ${RESOURCES_DIR}/drawable-hdpi/fbreader.png ]]; then
         echo "Could not find the icons in: ${RESOURCES_DIR}/drawable-hdpi/fbreader.png " && exit 1
 else
@@ -46,12 +60,14 @@ else
 fi
 
 # STEP 0.55: Make sure we have the required resources
-if [[ ! -r ${${RESOURCES_DIR}/epub_first_internal_path.list || ! -r ${RESOURCES_DIR}/epubs.list || ! -r ${RESOURCES_DIR}/name.metadata ]]; then
-	echo "Make sure you have all these files: ${RESOURCES_DIR}/epub_first_internal_path.list ${RESOURCES_DIR}/epubs.list ${RESOURCES_DIR}/name.metadata" && exit 4
+echo " STEP 0.55: Make sure we have the required resources"
+if [[ ( ! -r ${RESOURCES_DIR}/epub_first_internal_path.list ) || ( ! -r ${RESOURCES_DIR}/epubs.list ) || ( ! -r ${RESOURCES_DIR}/name.metadata ) ]]; then
+	echo "Make sure you have all these files: ${RESOURCES_DIR}/epub_first_internal_path.list ${RESOURCES_DIR}/epubs.list ${RESOURCES_DIR}/name.metadata"
+	exit 4
 fi
 
 # STEP 0.6: Make sure we have the Books directory
-echo "STEP 0.1: Make sure we have the Books diretory"
+echo "STEP 0.6: Make sure we have the Books diretory"
 
 if [[ ! -d ${BOOKS_DIR}/ ]]; then
         echo "Could not find the Books in: ${BOOKS_DIR}/" && exit 1
@@ -61,10 +77,10 @@ fi
 echo "Clean old books in the app (if any)"
 mkdir -p ./fbreader/app/src/main/assets/data/SDCard/Books/
 rm -rf ./fbreader/app/src/main/assets/data/SDCard/Books/*
-cp -f ./fbreader/app/src/main/assets/data/intro* ./fbreader/app/src/main/assets/data/SDCard/
+cp -f ./fbreader/app/src/main/assets/data/intro/* ./fbreader/app/src/main/assets/data/SDCard/
 
 # STEP 0.8: determine&copy required Books"
-echo "STEP 0.3: determine&copy required Books:"
+echo "STEP 0.8: determine&copy required Books:"
 while IFS= read B ; do
 	echo B=$B
 	ls -la "${BOOKS_DIR}/${B}"
@@ -73,7 +89,7 @@ while IFS= read B ; do
 done < ${RESOURCES_DIR}/epubs.list
 
 # STEP 0.9: determine name of the new app and other metadata details
-echo "STEP 0.4: determine name of the new app and other metadata details:"
+echo "STEP 0.9: determine name of the new app and other metadata details:"
 NEWAPP_CAMEL=$(grep NEWAPP_CAMEL ${RESOURCES_DIR}/name.metadata | cut -d"=" -f2)
 NEWAPP_SMALL=$(echo $NEWAPP_CAMEL | tr '[:upper:]' '[:lower:]' )
 NEWAPP_NAME=$NEWAPP_CAMEL
@@ -97,12 +113,13 @@ perl -p -i -e "s^Molitfelnic^${NEWAPP_CAMEL}^g" $ALL_FILES
 
 echo "STEP 2: Replace application name and its search hint"
 # STEP 2: Replace application name and its search hint
+EPUB_FIRST=$(cat ${RESOURCES_DIR}/epub_first_internal_path.list | tail -1)
 cat <<EOF >fbreader/app/src/main/res/values/strings.xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">${NEWAPP_NAME}</string>
   <string name="search_hint">${NEWAPP_SEARCH_HINT}</string>
-  <string name="first_book">$(cat ${RESOURCES_DIR}/epub_first_internal_path.list)</string>
+  <string name="first_book">${EPUB_FIRST}</string>
 </resources>
 
 EOF

@@ -1,4 +1,5 @@
-#!/bin/bash -xeuo pipefail
+#!/bin/bash
+set -xeuo pipefail
 
 echo "1. Copy the ~/Books_with_HowTO (howto image incorporated) to the ~/Books folder (which we use)"
 cp -rp ~/Books_with_HowTO/* ~/Books/
