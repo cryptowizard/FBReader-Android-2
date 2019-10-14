@@ -45,6 +45,11 @@ else
         cp -rpf ${RESOURCES_DIR}/drawable-*dpi ./fbreader/app/src/main/res/
 fi
 
+# STEP 0.55: Make sure we have the required resources
+if [[ ! -r ${${RESOURCES_DIR}/epub_first_internal_path.list || ! -r ${RESOURCES_DIR}/epubs.list || ! -r ${RESOURCES_DIR}/name.metadata ]]; then
+	echo "Make sure you have all these files: ${RESOURCES_DIR}/epub_first_internal_path.list ${RESOURCES_DIR}/epubs.list ${RESOURCES_DIR}/name.metadata" && exit 4
+fi
+
 # STEP 0.6: Make sure we have the Books directory
 echo "STEP 0.1: Make sure we have the Books diretory"
 
@@ -56,6 +61,7 @@ fi
 echo "Clean old books in the app (if any)"
 mkdir -p ./fbreader/app/src/main/assets/data/SDCard/Books/
 rm -rf ./fbreader/app/src/main/assets/data/SDCard/Books/*
+cp -f ./fbreader/app/src/main/assets/data/intro* ./fbreader/app/src/main/assets/data/SDCard/
 
 # STEP 0.8: determine&copy required Books"
 echo "STEP 0.3: determine&copy required Books:"
@@ -96,6 +102,7 @@ cat <<EOF >fbreader/app/src/main/res/values/strings.xml
 <resources>
   <string name="app_name">${NEWAPP_NAME}</string>
   <string name="search_hint">${NEWAPP_SEARCH_HINT}</string>
+  <string name="first_book">$(cat ${RESOURCES_DIR}/epub_first_internal_path.list)</string>
 </resources>
 
 EOF

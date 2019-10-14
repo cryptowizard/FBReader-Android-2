@@ -1,13 +1,22 @@
 #!/bin/bash
-set -Eeuxo pipefail
+set -Eexo pipefail
 DATE_START=`date +'%Y%m%d_%H%M%S'`
 
-echo "Name of the app being build provided as input is: $1"
-APP=$1
+if [[ -n $1 ]]; then
+  echo "Name of the app being build provided as input is: $1"
+  APP=$1
+  echo $APP >../current_app.txt~ 
+elif [[ -r ../current_app.txt~ ]]; then
+  APP=$(cat ../current_app.txt~)
+else
+  echo "Please provide input, e.g. Pidalion"
+  exit 1
+fi
 
 cd ~/
 if [[ ! -d FBReader-Android-2 ]]; then
-  git clone -b ${1:-molitfelnic} --single-branch git@github.com:aplicatii-romanesti/FBReader-Android-2.git
+  #git clone -b ${1:-molitfelnic} --single-branch git@github.com:aplicatii-romanesti/FBReader-Android-2.git
+  git clone -b molitfelnic --single-branch git@github.com:aplicatii-romanesti/FBReader-Android-2.git
 fi
 
 cd ~/FBReader-Android-2/

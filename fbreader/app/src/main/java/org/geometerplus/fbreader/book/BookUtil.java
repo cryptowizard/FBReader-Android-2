@@ -40,6 +40,19 @@ public abstract class BookUtil {
 		}
 	}
 
+	// aplicatii.romanesti
+	public static ZLResourceFile getFirstFile() {
+		ZLResourceFile file = ZLResourceFile.createResourceFile(
+				"@string/first_book"
+		);
+		if (file.exists()) {
+			return file;
+		}
+		// if above file was not found, default to the old getHelpFile
+		return BookUtil.getHelpFile();
+
+	}
+
 	public static ZLResourceFile getHelpFile() {
 		Locale.setDefault(new Locale("ro", "RO")); //aplicatii.romanesti added
 		final Locale locale = Locale.getDefault();

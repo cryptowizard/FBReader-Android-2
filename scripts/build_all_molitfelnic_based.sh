@@ -7,6 +7,7 @@ echo "2. Going to start build one by one:"
 
 for app in BibliaOrtodoxa VietileSfintilor BibliotecaOrtodoxa Pidalion; do
   echo "Building $app"
+  echo "$app" >../current_app.txt~
   git reset --hard HEAD
   ./molitfelnic_to_any_app.sh $app && ./dockerbuild.sh $app
 done

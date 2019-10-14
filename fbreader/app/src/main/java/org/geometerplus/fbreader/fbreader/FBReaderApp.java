@@ -186,6 +186,9 @@ public final class FBReaderApp extends ZLApplication implements IBookCollection.
 			if (book == null) {
 				book = Collection.getRecentBook(0);
 			}
+			if (book == null || !BookUtil.fileByBook(book).exists()) { //aplicatii.romanesti
+				book = Collection.getBookByFile(BookUtil.getFirstFile().getPath());
+			}
 			if (book == null || !BookUtil.fileByBook(book).exists()) {
 				book = Collection.getBookByFile(BookUtil.getHelpFile().getPath());
 			}
