@@ -112,8 +112,8 @@ perl -p -i -e "s^molitfelnic^${NEWAPP_SMALL}^g" $ALL_FILES
 perl -p -i -e "s^Molitfelnic^${NEWAPP_CAMEL}^g" $ALL_FILES
 
 echo "STEP 1.1 - getFirstFileBookReplaceTOKEN"
-EPUB_FIRST=$(cat ${RESOURCES_DIR}/epub_first_internal_path.list | tail -1)
-sed -i "s%.*getFirstFileBookReplaceTOKEN.*%${EPUB_FIRST}%" fbreader/app/src/main/java/org/geometerplus/fbreader/book/BookUtil.java
+EPUB_FIRST="\"$(cat ${RESOURCES_DIR}/epub_first_internal_path.list | tail -1)\""
+sed -i "s%.*getFirstFileBookReplaceTOKEN.*%\"${EPUB_FIRST}%\"" fbreader/app/src/main/java/org/geometerplus/fbreader/book/BookUtil.java
 
 
 echo "STEP 2: Replace application name and its search hint"
