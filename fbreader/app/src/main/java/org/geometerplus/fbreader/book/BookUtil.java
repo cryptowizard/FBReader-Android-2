@@ -30,7 +30,8 @@ import org.fbreader.util.IOUtil;
 import org.geometerplus.zlibrary.core.filesystem.*;
 
 import org.geometerplus.fbreader.formats.*;
-
+import org.geometerplus.zlibrary.ui.android.aplicatii.romanesti_bibliaortodoxa.R;
+import android.content.res.Resources;//aplicatii.romanesti for geF
 public abstract class BookUtil {
 	public static String getAnnotation(AbstractBook book, PluginCollection pluginCollection) {
 		try {
@@ -43,7 +44,7 @@ public abstract class BookUtil {
 	// aplicatii.romanesti
 	public static ZLResourceFile getFirstFile() {
 		ZLResourceFile file = ZLResourceFile.createResourceFile(
-				"@string/first_book"
+				Resources.getSystem().getString(R.string.first_book)
 		);
 		if (file.exists()) {
 			return file;
