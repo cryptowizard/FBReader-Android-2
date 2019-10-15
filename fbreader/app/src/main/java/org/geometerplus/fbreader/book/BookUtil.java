@@ -30,8 +30,7 @@ import org.fbreader.util.IOUtil;
 import org.geometerplus.zlibrary.core.filesystem.*;
 
 import org.geometerplus.fbreader.formats.*;
-import org.geometerplus.zlibrary.ui.android.aplicatii.romanesti_molitfelnic.R; //aplicatii.romanesti for getFirstFile from strings.xml
-import android.content.res.Resources;//aplicatii.romanesti for getFirstFile from strings.xml
+
 public abstract class BookUtil {
 	public static String getAnnotation(AbstractBook book, PluginCollection pluginCollection) {
 		try {
@@ -44,7 +43,7 @@ public abstract class BookUtil {
 	// aplicatii.romanesti
 	public static ZLResourceFile getFirstFile() {
 		ZLResourceFile file = ZLResourceFile.createResourceFile(
-				Resources.getSystem().getString(R.string.first_book)
+				"data/SDCard/Books/Slujbe/Molitfelnicul necenzurat - mirem.ro,bibliotecaortodoxa.ro.epub" //getFirstFileBookReplaceTOKEN // don not remove this comment and keep it inline
 		);
 		if (file.exists()) {
 			return file;

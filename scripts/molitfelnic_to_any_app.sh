@@ -111,15 +111,19 @@ ALL_FILES=$(find . \( -path "*/build" -o -path "./.gradle" -o -path "*/.git" \) 
 perl -p -i -e "s^molitfelnic^${NEWAPP_SMALL}^g" $ALL_FILES
 perl -p -i -e "s^Molitfelnic^${NEWAPP_CAMEL}^g" $ALL_FILES
 
+echo "STEP 1.1 - getFirstFileBookReplaceTOKEN"
+EPUB_FIRST=$(cat ${RESOURCES_DIR}/epub_first_internal_path.list | tail -1)
+sed -i "s/.*getFirstFileBookReplaceTOKEN.*/${EPUB_FIRST}/" fbreader/app/src/main/java/org/geometerplus/fbreader/book/BookUtil.java
+
+
 echo "STEP 2: Replace application name and its search hint"
 # STEP 2: Replace application name and its search hint
-EPUB_FIRST=$(cat ${RESOURCES_DIR}/epub_first_internal_path.list | tail -1)
+
 cat <<EOF >fbreader/app/src/main/res/values/strings.xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">${NEWAPP_NAME}</string>
   <string name="search_hint">${NEWAPP_SEARCH_HINT}</string>
-  <string name="first_book">${EPUB_FIRST}</string>
 </resources>
 
 EOF
