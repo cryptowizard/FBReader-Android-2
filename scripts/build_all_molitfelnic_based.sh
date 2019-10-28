@@ -1,12 +1,18 @@
 #!/bin/bash
 set -xeuo pipefail
 
+if [[ -z $1 ]]; then
+  APPS_M_BASED=(BibliaOrtodoxa VietileSfintilor BibliotecaOrtodoxa Pidalion Liturghier)
+else
+  APPS_M_BASED=($@)
+fi
+
 echo "1. Copy the ~/Books_with_HowTO (howto image incorporated) to the ~/Books folder (which we use)"
 cp -rp ~/Books_with_HowTO/* ~/Books/
 
 echo "2. Going to start build one by one:"
 
-for app in BibliaOrtodoxa VietileSfintilor BibliotecaOrtodoxa Pidalion; do
+for app in ${APPS_M_BASED[@]}; do
   echo "Building $app"
   echo "$app" >../current_app.txt~
   git reset --hard HEAD
