@@ -2,7 +2,7 @@
 set -xeuo pipefail
 
 if [[ -z $1 ]]; then
-  APPS_M_BASED=(BibliaOrtodoxa VietileSfintilor BibliotecaOrtodoxa Pidalion Liturghier)
+  APPS_M_BASED=(BibliaOrtodoxa VietileSfintilor BibliotecaOrtodoxa Pidalion Liturghier ColindeUraturiPlugusor)
 else
   APPS_M_BASED=($@)
 fi
