@@ -35,6 +35,18 @@ cp ~/777/aplicatii.romanesti-release-key.keystore ~/FBReader-Android-2/
 #unzip '/home/aplicatii-romanesti/ToateCartile_EPUB_latest.zip'
 #cd -
 
+
+### VERIFY BUILD NUMBERS MATCH:
+BUILD_FOLDER="~/FBReader-Android-2"
+VV=$(cat ${BUILD_FOLDER}/fbreader/app/VERSION | cut -d"." -f3)
+VSQL=$(grep 'currentVersion =' ${BUILD_FOLDER}/fbreader/app/src/main/java/org/geometerplus/android/fbreader/libraryService/SQLiteBooksDatabase.java| cut -d"=" -f2 | cut -d";" -f1 | cut -d" " -f2)
+
+if [[ $VV -ne $VSQL ]]; then
+  echo "ERROR !!!!  $VV != $VSQL -> FIX VERSIONS!!!"
+  exit 9
+fi
+
+
 cd ~/
 docker rm -f fb || true
 #docker run --name fb -ti -v `pwd`/FBReader-Android-2:/p mingc/android-build-box:1.11.1 bash -c 'cd /p/ && ./gradlew  --gradle-user-home=/p/.gradle/ clean assembleRelease' | tee -a $GIT_BRANCH.log
