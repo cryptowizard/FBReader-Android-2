@@ -131,6 +131,8 @@ public class ZLAndroidWidget extends MainView implements ZLViewWidget, View.OnLo
 					myAnimationProvider = new ShiftAnimationProvider(myBitmapManager);
 					break;
 			}
+			myAnimationProvider = new NoneAnimationProvider(myBitmapManager);
+
 		}
 		return myAnimationProvider;
 	}
